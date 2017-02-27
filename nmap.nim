@@ -12,9 +12,18 @@
 
 import strutils, httpclient
 
-type host = string
+type
+   host = string
+   lHost = bool
+   lPort = bool
+   rHost = bool
+   rPort = bool
 
-proc nmap_scan*(host, port: string): Response {.exportc.} =
+var
+   portNum = [20, 21, 22, 23, 80, 443]##Common ports
+   portDes = ["ftp", "sftp", "ssh", "telnet", "http", "https"]
+
+proc nmap_scan*(host, port: string): Response {.exportc.} = ##basic nmap and port scan
    try:
       var
          timeout = 5
