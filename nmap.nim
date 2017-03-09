@@ -10,22 +10,32 @@
 
 {.deadCodeElim: on.}
 
-import strutils, httpclient, os, sequtils, nativesockets
+import net, strutils, os
 
 type
    host = string
-   port = string
-   lHost = bool
-   lPort = bool
-   rHost = bool
-   rPort = bool
-   portDes = enum
-      ftp, sftp, ssh, telnet, http, https
+   port = int
 
-var
-   portArg = ("common")
-   portNum: array[6, string]
-portNum = ["20", "21", "22", "23", "80", "443"]#Common ports
+const 
+   TCP = IPPROTO_TCP
+   UDP = IPPROTO_UDP
+   RAW = IPPROTO_RAW
+   ICMP = IPPROTO_ICMP
+   IPv4 = AF_INET
+   IPv6 = AF_INET6
+   STREAM = SOCK_STREAM
+   DGRAM = SOCK_DGRAM
+   sRAW = SOCK_RAW
+   SEQPACKET = SOCK_SEQPACKET
+   SSH = 22
+   TELNET = 23
+   HTTP = 80
+   HTTPS = 443
+   
+type portArray = array[0..3, int]
+var portList: portArray
+portList = [22, 23, 80, 443]
+var portLen = portList.len
 
 ################################################################
 
@@ -33,18 +43,14 @@ proc nmap_iface*(): int {.exportc.} = ##Display current network interfaces
    let iFace = execShellCmd("ifconfig")
    return (iFace)
 
-proc nmap_scan*(host, port: string): Response {.exportc.} = ##basic nmap and port scan
+proc nmap_scan*(host: string, port: int): string {.discardable.} = ##basic nmap and port scan
    try:
-      var timeout = 5
-      var client = newHttpClient(timeout = timeout * 1000)
-      var url = "http://" & host & ":" & "80"
-      var resp = client.request(url)
-      echo resp.status
+      var sock = newSocket(IPV4, STREAM, TCP)
+      sock.connect(host, Port(port))
+      let sPort = intToStr(port)
+      echo host & " Connected succesfully on " & sPort
+      sock.close()
    except:
-      let testPort: string = getCurrentExceptionMsg()
-      let portResp = find(testPort, "SSH")
-      if portResp != -1:
-         echo split(testPort, "invalid http version, ")
-      else:
-         echo "SSH port not open or filtered"
-
+      let ErrorMsg = getCurrentExceptionMsg()
+      let sPort = intToStr(port)
+      echo ErrorMsg &  " on " & sPort
