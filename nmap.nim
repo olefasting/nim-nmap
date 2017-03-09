@@ -10,7 +10,7 @@
 
 {.deadCodeElim: on.}
 
-import strutils, httpclient, os, sequtils
+import strutils, httpclient, os, sequtils, nativesockets
 
 type
    host = string
@@ -37,15 +37,9 @@ proc nmap_scan*(host, port: string): Response {.exportc.} = ##basic nmap and por
    try:
       var timeout = 5
       var client = newHttpClient(timeout = timeout * 1000)
-      if port == portArg:
-         for i in low[portNum]..high[portNum]:
-            var url = "http://" & host & ":" & portNum[i]
-            var resp = client.request(url)
-            echo resp.status
-      else:
-         var url = "http://" & host & ":" & port
-         var resp = client.request(url)
-         echo resp.status
+      var url = "http://" & host & ":" & "80"
+      var resp = client.request(url)
+      echo resp.status
    except:
       let testPort: string = getCurrentExceptionMsg()
       let portResp = find(testPort, "SSH")
@@ -53,3 +47,4 @@ proc nmap_scan*(host, port: string): Response {.exportc.} = ##basic nmap and por
          echo split(testPort, "invalid http version, ")
       else:
          echo "SSH port not open or filtered"
+
