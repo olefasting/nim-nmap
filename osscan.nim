@@ -1,4 +1,4 @@
-import net, nmap
+import net, strutils, nmap
 
 const 
    TCP = IPPROTO_TCP
@@ -16,12 +16,23 @@ const
    HTTP = 80
    HTTPS = 443
 
+type portArray = array[0..3, int]
+var portList: portArray
+portList = [22, 23, 80, 443]
+var portLen = portList.len
+
 proc osscan(host: string, port: int) = 
    try:
       var sock = newSocket(IPV4, STREAM, TCP)
       sock.connect(host, Port(port))
+      let sPort = intToStr(port)
+      echo host & " Connected succesfully on " & sPort
+      sock.close()
    except:
       let ErrorMsg = getCurrentExceptionMsg()
-      echo ErrorMsg
-
-osscan("192.168.0.11", 24)
+      let sPort = intToStr(port)
+      echo ErrorMsg &  " on " & sPort
+var i = 0
+while i != portLen:
+   osscan("192.168.0.11", portList[i])
+   i = i + 1
