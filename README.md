@@ -67,6 +67,7 @@ Documentation will be added as this project progresses as well as commented sect
 # Examples
 ## NetMask via createMask() ##
 
+    import nmap
     createMask("192.168.1.1/24") 
     for i in netMask:
       nmapScan(i, 80)
