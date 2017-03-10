@@ -66,16 +66,16 @@ Documentation will be added as this project progresses as well as commented sect
 <br>
 # Examples
 ## NetMask via createMask() ##
-code()
+'''nim
 createMask("192.168.1.1/24")
 for i in netMask:
    nmapScan(i, 80)
-
+'''
 <br>
 Result will be something like this.
 <br>
-code()
+'''
 192.168.1.1 Connected succesfully on 80
 192.168.1.2 No route to host on 80
 192.168.1.3 No route to host on 80
-
+'''
