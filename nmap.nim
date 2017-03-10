@@ -56,6 +56,13 @@ proc nMap_iface*(): (string, Port) {.discardable.} =
    self.listen()
    let iface = getPeerAddr(self)
    echo iface
+#WIP for pulling interface information from the localhost
+#
+#Our earlier version included calling ifconfig from -
+#the shell rather than using a pure nim solution
+#
+#hopefully this can be figured out soon...
+#
 
 
 #This proc is standard connect
@@ -92,10 +99,10 @@ proc nMap_scan*(host: string, port: int,
       if nType == UDP:
          var sock = newSocket()
          discard sock.sendTo(host, Port(port), "status\n")
-         let recPacket = sock.recvLine(1024 * 5)
-         echo sizeOf(recPacket)
+         let recPacket = sock.recvLine(1024 * 5)#TODO Work on sending and receiving data from Packets
+         echo sizeOf(recPacket)#TODO
       else:
-         var sock = newSocket(aType, sType, nType)
+         var sock = newSocket(aType, sType, nType)#Allow control over Domain, SockType, and Protocol
          sock.connect(host, Port(port))
          let sPort = intToStr(port)
          echo host & " Connected succesfully on " & sPort
