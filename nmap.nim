@@ -12,10 +12,7 @@
 
 import net, strutils, os
 
-type
-   host = string
-   port = int
-
+##Constant Values, Types and Exports
 const 
    TCP = IPPROTO_TCP
    UDP = IPPROTO_UDP
@@ -31,7 +28,26 @@ const
    TELNET = 23
    HTTP = 80
    HTTPS = 443
+#   defineNet = defined(c_net)
+
+var
+   aType = IPv4   
+   sType = STREAM
+   nType = TCP
+
    
+#when defineNet: TODO:Add lowlevel control
+#   case cNet: bool
+#   of true:
+#      type
+#         customNet* = enum
+#         aType = Domain, sType = SockType, nType = Protocol
+   
+export SSH, TELNET, HTTP, HTTPS, TCP, UDP, RAW, ICMP
+export IPv4, IPv6, STREAM, DGRAM, sRAW, SEQPACKET
+export aType, sType, nType
+
+################################################################
 type portArray = array[0..3, int]
 var portList: portArray
 portList = [22, 23, 80, 443]
@@ -42,15 +58,15 @@ var portLen = portList.len
 proc nmap_iface*(): int {.exportc.} = ##Display current network interfaces
    let iFace = execShellCmd("ifconfig")
    return (iFace)
-
-proc nmap_scan*(host: string, port: int): string {.discardable.} = ##basic nmap and port scan
+##Begin nmap_scan
+proc nmap_scan*(host: string, port: int): string {.discardable.} =
    try:
-      var sock = newSocket(IPV4, STREAM, TCP)
+      var sock = newSocket(aType, sType, nType)
       sock.connect(host, Port(port))
       let sPort = intToStr(port)
       echo host & " Connected succesfully on " & sPort
       sock.close()
    except:
-      let ErrorMsg = getCurrentExceptionMsg()
-      let sPort = intToStr(port)
-      echo ErrorMsg &  " on " & sPort
+     let ErrorMsg = getCurrentExceptionMsg()
+     let sPort = intToStr(port)
+     echo ErrorMsg &  " on " & sPort
