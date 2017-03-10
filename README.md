@@ -34,3 +34,10 @@ Documentation will be added as this project progresses as well as commented sect
  * UDP
  * RAW
  * ICMP
+
+# Roadmap to v1.0
+[x] Basic socket support
+[ ] Read packet information(i.e. TTL, WindowSize)
+[ ] Test if Ports are filtered or not
+[ ] Host Discovery
+[ ] OS Fingerprinting
