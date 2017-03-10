@@ -37,16 +37,21 @@ var
    nType = TCP                      #Protocol
    recPacket = newString(1024)      #1024bit Packet
    portList: seq[int]               #Custom Ports
+   hostMask: seq[string]
+   netMask: seq[string]
 #PortList Defaults
 portList = @[]
 portList.add(22)
 portList.add(23)
 portList.add(80)
 portList.add(443)
+#HostMask & NetMask Controls
+hostMask = @[]
+netMask = @[]
 ##########################################################
 export SSH, TELNET, HTTP, HTTPS, TCP, UDP, RAW, ICMP
 export IPv4, IPv6, STREAM, DGRAM, SRAW, SEQPACKET
-export aType, sType, nType, portList
+export aType, sType, nType, portList, netMask, hostMask
 ##########################################################
 #nmap commands and additional features
 {.experimental.}
@@ -63,6 +68,21 @@ proc nMap_iface*(): (string, Port) {.discardable.} =
 #
 #hopefully this can be figured out soon...
 #
+
+proc createMask*(host: string): string {.discardable.} =
+   var i = 1
+   if endsWith(host, "/24"):##Create NetMask out of IP Address
+      let host = replace(host, "/24", "")
+      let seperators = {'.'}
+      for f in split(host, seperators):
+         hostMask.add(f)
+   else:
+      echo "error"
+
+   let ipMask = hostMask[0] & "." & hostMask[1] & "." & hostMask[2] & "."
+   while i <= 255:
+      netMask.add(ipMask & $i)
+      inc(i)
 
 
 #This proc is standard connect
