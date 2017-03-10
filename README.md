@@ -65,7 +65,7 @@ Documentation will be added as this project progresses as well as commented sect
 <br>
 <br>
 # Examples
-## NetMask via createMask()
+## NetMask via createMask() ##
 code(
 createMask("192.168.1.1/24")
 for i in netMask:
