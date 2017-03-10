@@ -43,15 +43,12 @@ portList.add(22)
 portList.add(23)
 portList.add(80)
 portList.add(443)
-#################
+##########################################################
 export SSH, TELNET, HTTP, HTTPS, TCP, UDP, RAW, ICMP
 export IPv4, IPv6, STREAM, DGRAM, SRAW, SEQPACKET
 export aType, sType, nType, portList
-
-################################################################
-
-
-################################################################
+##########################################################
+#nmap commands and additional features
 {.experimental.}
 proc nMap_iface*(): (string, Port) {.discardable.} =
    var self = newSocket(IPv4, STREAM, TCP)
