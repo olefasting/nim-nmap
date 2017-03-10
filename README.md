@@ -76,7 +76,5 @@ Result will be something like this.
 <br>
 
     192.168.1.1 Connected succesfully on 80
-
     192.168.1.2 No route to host on 80
- 
     192.168.1.3 No route to host on 80
