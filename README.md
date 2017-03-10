@@ -37,7 +37,13 @@ Documentation will be added as this project progresses as well as commented sect
 
 # Roadmap to v1.0
 [x] Basic socket support
+<br>
 [ ] Read packet information(i.e. TTL, WindowSize)
+<br>
 [ ] Test if Ports are filtered or not
+<br>
 [ ] Host Discovery
+<br>
 [ ] OS Fingerprinting
+<br>
+[ ] nMap_iface()
