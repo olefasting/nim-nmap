@@ -13,3 +13,20 @@ Documentation will be added as this project progresses as well as commented sect
 <br>
 * nMap_scan(host: string, Port(port: int)
 * nMap_scan(host: string, Port(port: int, aType: Domain, sType: SockType, nType: Protocol)
+<br>
+<br>
+# Arguments
+<br>
+* Domain
+ * IPv4
+ * IPv6
+* SockType
+ * STREAM
+ * DGRAM
+ * SRAW
+ * SEQPACKET
+* Protocol
+ * TCP
+ * UDP
+ * RAW
+ * ICMP
