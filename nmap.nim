@@ -32,13 +32,15 @@ const
    HTTPS = 443
 
 var
-   aType = IPv4                     #Domain
-   sType = STREAM                   #sockType
-   nType = TCP                      #Protocol
+   dType = IPv4                     #Domain
+   sType = STREAM                   #SockType
+   pType = TCP                      #Protocol
    recPacket = newString(1024)      #1024bit Packet
    portList: seq[int]               #Custom Ports
-   hostMask: seq[string]
-   netMask: seq[string]
+   hostMask: seq[string]            #Carry's IP bits
+   hostSwitch = 0                   #use NetMask to eliminate manual
+                                    #call to createMask
+   netMask: seq[string]             #e.g. 192.168.1.1/24
 #PortList Defaults
 portList = @[]
 portList.add(22)
@@ -51,7 +53,8 @@ netMask = @[]
 ##########################################################
 export SSH, TELNET, HTTP, HTTPS, TCP, UDP, RAW, ICMP
 export IPv4, IPv6, STREAM, DGRAM, SRAW, SEQPACKET
-export aType, sType, nType, portList, netMask, hostMask
+export dType, sType, pType, portList, netMask, hostMask
+export hostSwitch
 ##########################################################
 #nmap commands and additional features
 {.experimental.}
@@ -86,7 +89,7 @@ proc createMask*(host: string): string {.discardable.} =
 
 
 #This proc is standard connect
-proc nMap_scan*(host: string, port: int): string {.discardable.} =
+proc nmapScan*(host: string, port: int): string {.discardable.} =
    if port == 0:
       for i in portList:
          try:
@@ -98,7 +101,7 @@ proc nMap_scan*(host: string, port: int): string {.discardable.} =
          except:
             let ErrorMsg = getCurrentExceptionMsg()
             let sPort = intToStr(i)
-            echo ErrorMsg &  " on " & sPort
+            echo host & " " & ErrorMsg &  " on " & sPort
    else:
       try:
          var sock = newSocket(IPv4, STREAM, TCP)
@@ -109,20 +112,20 @@ proc nMap_scan*(host: string, port: int): string {.discardable.} =
       except:
          let ErrorMsg = getCurrentExceptionMsg()
          let sPort = intToStr(port)
-         echo ErrorMsg &  " on " & sPort
+         echo host & " " & ErrorMsg &  " on " & sPort
 
 #This proc allows additional low-level control
-proc nMap_scan*(host: string, port: int,
-                aType: Domain, sType: SockType, nType: Protocol):
+proc nmapScan*(host: string, port: int,
+                dType: Domain, sType: SockType, pType: Protocol):
                 string {.discardable.} =
    try:
-      if nType == UDP:
+      if pType == UDP:
          var sock = newSocket()
          discard sock.sendTo(host, Port(port), "status\n")
          let recPacket = sock.recvLine(1024 * 5)#TODO Work on sending and receiving data from Packets
          echo sizeOf(recPacket)#TODO
       else:
-         var sock = newSocket(aType, sType, nType)#Allow control over Domain, SockType, and Protocol
+         var sock = newSocket(dType, sType, pType)#Allow control over Domain, SockType, and Protocol
          sock.connect(host, Port(port))
          let sPort = intToStr(port)
          echo host & " Connected succesfully on " & sPort
@@ -133,4 +136,4 @@ proc nMap_scan*(host: string, port: int,
    except:
      let ErrorMsg = getCurrentExceptionMsg()
      let sPort = intToStr(port)
-     echo ErrorMsg &  " on " & sPort
+     echo host & " " & ErrorMsg &  " on " & sPort
