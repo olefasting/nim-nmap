@@ -60,3 +60,5 @@ Documentation will be added as this project progresses as well as commented sect
 [ ] OS Fingerprinting
 <br>
 [ ] nMap_iface()
+<br>
+[ ] NetMask support for host: string
