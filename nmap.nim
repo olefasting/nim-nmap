@@ -31,17 +31,10 @@ const
 #   defineNet = defined(c_net)
 
 var
-   aType = IPv4   
-   sType = STREAM
-   nType = TCP
+   aType = IPv4   #Domain
+   sType = STREAM #SockType
+   nType = TCP    #Protocol
 
-   
-#when defineNet: TODO:Add lowlevel control
-#   case cNet: bool
-#   of true:
-#      type
-#         customNet* = enum
-#         aType = Domain, sType = SockType, nType = Protocol
    
 export SSH, TELNET, HTTP, HTTPS, TCP, UDP, RAW, ICMP
 export IPv4, IPv6, STREAM, DGRAM, sRAW, SEQPACKET
@@ -59,7 +52,9 @@ proc nmap_iface*(): int {.exportc.} = ##Display current network interfaces
    let iFace = execShellCmd("ifconfig")
    return (iFace)
 ##Begin nmap_scan
-proc nmap_scan*(host: string, port: int): string {.discardable.} =
+proc nMap_scan*(host: string, port: int, #This proc allows additional low-level control
+                aType: Domain, sType: SockType, nType: Protocol): 
+                string {.discardable.} =
    try:
       var sock = newSocket(aType, sType, nType)
       sock.connect(host, Port(port))
@@ -70,3 +65,16 @@ proc nmap_scan*(host: string, port: int): string {.discardable.} =
      let ErrorMsg = getCurrentExceptionMsg()
      let sPort = intToStr(port)
      echo ErrorMsg &  " on " & sPort
+     
+     
+proc nMap_scan*(host: string, port: int): string {.discardable.} =#This proc is standard connect
+   try:
+      var sock = newSocket(aType, sType, nType)
+      sock.connect(host, Port(port))
+      let sPort = intToStr(port)
+      echo host & " Connected succesfully on " & sPort
+      sock.close()
+   except:
+      let ErrorMsg = getCurrentExceptionMsg()
+      let sPort = intToStr(port)
+      echo ErrorMsg &  " on " & sPort
