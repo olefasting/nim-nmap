@@ -8,7 +8,9 @@
 ## 2017 - blmvxer <blmvxer@gmail.com>
 ##
 
-{.deadCodeElim: on.}
+#Compiler options
+{.deadCodeElim: on, hints: off, warnings: off.}
+#
 
 import net, strutils, os
 
@@ -30,23 +32,27 @@ const
    HTTPS = 443
 
 var
-   aType = IPv4   #Domain
-   sType = STREAM #sockType
-   nType = TCP    #Protocol
-   recPacket = newString(1024)
-
+   aType = IPv4                     #Domain
+   sType = STREAM                   #sockType
+   nType = TCP                      #Protocol
+   recPacket = newString(1024)      #1024bit Packet
+   portList: seq[int]               #Custom Ports
+#PortList Defaults
+portList = @[]
+portList.add(22)
+portList.add(23)
+portList.add(80)
+portList.add(443)
+#################
 export SSH, TELNET, HTTP, HTTPS, TCP, UDP, RAW, ICMP
 export IPv4, IPv6, STREAM, DGRAM, SRAW, SEQPACKET
-export aType, sType, nType
-
-################################################################
-type portArray = array[0..3, int]
-var portList: portArray
-portList = [22, 23, 80, 443]
-var portLen = portList.len
+export aType, sType, nType, portList
 
 ################################################################
 
+
+################################################################
+{.experimental.}
 proc nMap_iface*(): (string, Port) {.discardable.} =
    var self = newSocket(IPv4, STREAM, TCP)
    self.bindAddr(Port(83))
@@ -57,16 +63,29 @@ proc nMap_iface*(): (string, Port) {.discardable.} =
 
 #This proc is standard connect
 proc nMap_scan*(host: string, port: int): string {.discardable.} =
-   try:
-      var sock = newSocket(IPv4, STREAM, TCP)
-      sock.connect(host, Port(port))
-      let sPort = intToStr(port)
-      echo host & " Connected succesfully on " & sPort
-      sock.close()
-   except:
-      let ErrorMsg = getCurrentExceptionMsg()
-      let sPort = intToStr(port)
-      echo ErrorMsg &  " on " & sPort
+   if port == 0:
+      for i in portList:
+         try:
+            var sock = newSocket(IPv4, STREAM, TCP)
+            sock.connect(host, Port(i))
+            let sPort = intToStr(i)
+            echo host & " Connected succesfully on " & sPort
+            sock.close()
+         except:
+            let ErrorMsg = getCurrentExceptionMsg()
+            let sPort = intToStr(i)
+            echo ErrorMsg &  " on " & sPort
+   else:
+      try:
+         var sock = newSocket(IPv4, STREAM, TCP)
+         sock.connect(host, Port(port))
+         let sPort = intToStr(port)
+         echo host & " Connected succesfully on " & sPort
+         sock.close()
+      except:
+         let ErrorMsg = getCurrentExceptionMsg()
+         let sPort = intToStr(port)
+         echo ErrorMsg &  " on " & sPort
 
 #This proc allows additional low-level control
 proc nMap_scan*(host: string, port: int,
