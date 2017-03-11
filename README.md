@@ -28,7 +28,7 @@ Documentation will be added as this project progresses as well as commented sect
 * Host
  * IP Address
 * Port
- * 0 - Custom ports using portList(22,23,80,443: Defaults)
+ * 0 - Custom ports using portList
  * SSH - 22
  * TELNET 23
  * HTTP - 80
