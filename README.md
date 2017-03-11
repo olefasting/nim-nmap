@@ -1,4 +1,4 @@
-# nim-nmap v0.1.3
+# nim-nmap v0.1.4
 A pure implementation of Nmap for Nim
 <br>
 <br>
