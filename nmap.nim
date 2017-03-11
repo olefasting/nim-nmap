@@ -41,6 +41,7 @@ var
    hostSwitch = 0                   #use NetMask to eliminate manual
                                     #call to createMask
    netMask: seq[string]             #e.g. 192.168.1.1/24
+   localWlan = "192.168.x.1"        #Define router
 #PortList Defaults
 portList = @[]
 portList.add(22)
@@ -57,21 +58,6 @@ export dType, sType, pType, portList, netMask, hostMask
 export hostSwitch
 ##########################################################
 #nmap commands and additional features
-{.experimental.}
-proc nMap_iface*(): (string, Port) {.discardable.} =
-   var self = newSocket(IPv4, STREAM, TCP)
-   self.bindAddr(Port(83))
-   self.listen()
-   let iface = getPeerAddr(self)
-   echo iface
-#WIP for pulling interface information from the localhost
-#
-#Our earlier version included calling ifconfig from -
-#the shell rather than using a pure nim solution
-#
-#hopefully this can be figured out soon...
-#
-
 proc createMask*(host: string): string {.discardable.} =
    var i = 1
    if endsWith(host, "/24"):##Create NetMask out of IP Address
@@ -86,7 +72,32 @@ proc createMask*(host: string): string {.discardable.} =
    while i <= 255:
       netMask.add(ipMask & $i)
       inc(i)
-
+      
+proc nmapIface*(): (string) {.discardable.} =
+   var i = 0
+   while i <= 255:
+      let localWlan = replace(localWlan, "x", $i)
+      try:
+         var sock = newSocket(IPv4, STREAM, TCP)
+         echo localWlan
+         sock.connect(localWlan, Port(HTTP), 350 * 1)
+         let router = localWlan
+         sock.close()
+         var socket = newSocket()
+         socket.bindAddr(Port(82))
+         socket.listen()
+         createMask(router)
+         for x in netMask:
+            try:
+               var iface = newSocket()
+               iface.connect(x, Port(82), 350 * 1)
+               echo "localhost: " & x
+               socket.close()
+               iface.close()
+            except:
+               inc(i)
+      except:
+         inc(i)
 
 #This proc is standard connect
 proc nmapScan*(host: string, port: int): string {.discardable.} =
