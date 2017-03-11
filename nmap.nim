@@ -4,7 +4,7 @@
 ##
 ## Credit: https://nmap.org
 ##
-## Released under GPLv2, see LICENSE file
+## Released under GPLv3, see LICENSE file
 ## 2017 - blmvxer <blmvxer@gmail.com>
 ##
 
