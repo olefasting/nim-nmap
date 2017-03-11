@@ -20,7 +20,6 @@ Documentation will be added as this project progresses as well as commented sect
  * Determines local router and host on network
 <br>
 * portList.add(port: int)
-* for i in countup(1, 999): portList.add(i)
 <br>
 
 # Arguments
@@ -94,3 +93,7 @@ Result will be something like this.
     import nmap
     portList.add(22)
     nmapHostDisc()
+<br>
+Bugs in portList with Host Discovery
+<br>
+Adding too many ports(700+) results in too many files open
