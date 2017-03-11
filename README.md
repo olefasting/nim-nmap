@@ -82,3 +82,15 @@ Result will be something like this.
     192.168.1.1 Connected succesfully on 80
     192.168.1.2 No route to host on 80
     192.168.1.3 No route to host on 80
+<br>
+## nmapHostDisc() ##
+    import nmap
+    for p in countup(1, 999):
+       portList.add(p)
+    nmapHostDisc()
+    
+    or
+   
+    import nmap
+    portList.add(22)
+    nmapHostDisc()
