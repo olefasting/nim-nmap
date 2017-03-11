@@ -42,10 +42,7 @@ var
    localWlan = "192.168.x.1"        #Define router
    hostDisc: seq[string]            #Host carrier
 #List handlers
-portList = @[]                      #init portList early on
-for p in countup(1, 999):
-   portList.add(p)
-###################
+portList = @[]
 hostMask = @[]
 netMask = @[]
 hostDisc = @[]
