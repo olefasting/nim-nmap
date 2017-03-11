@@ -52,7 +52,7 @@ portList.add(443)
 #HostMask & NetMask Controls
 hostMask = @[]
 netMask = @[]
-hostDisc =  @[]
+hostDisc = @[]
 ##########################################################
 export SSH, TELNET, HTTP, HTTPS, TCP, UDP, RAW, ICMP
 export IPv4, IPv6, STREAM, DGRAM, SRAW, SEQPACKET
@@ -76,9 +76,9 @@ proc createMask*(host: string): string {.discardable.} =
       inc(i)
 
 proc nmapHostDisc*(): (string) {.discardable.} =
-   var i = 0
-   for i in countup(0, 255):
-      let localWlan = replace(localWlan, "x", $i)
+   var v = 0
+   for v in countup(0, 255):
+      let localWlan = replace(localWlan, "x", $v)
       echo "Router: " & localWlan
       try:
          var sock = newSocket(IPv4, STREAM, TCP)
@@ -102,9 +102,14 @@ proc nmapHostDisc*(): (string) {.discardable.} =
                  let ErrorMsg = getCurrentExceptionMsg()
          except:
             let ErrorMsg = getCurrentExceptionMsg()
+         finally:
+            echo "\n"
+            echo "\n"
+            echo "\n"
+            echo "Host on Network: " & hostDisc
+            quit()
       except:
          let ErrorMsg = getCurrentExceptionMsg()
-   echo "Host on Network: " & hostDisc
          
 #This proc is standard connect
 proc nmapScan*(host: string, port: int): string {.discardable.} =
