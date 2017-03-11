@@ -42,6 +42,7 @@ var
                                     #call to createMask
    netMask: seq[string]             #e.g. 192.168.1.1/24
    localWlan = "192.168.x.1"        #Define router
+   hostDisc: seq[string]
 #PortList Defaults
 portList = @[]
 portList.add(22)
@@ -51,6 +52,7 @@ portList.add(443)
 #HostMask & NetMask Controls
 hostMask = @[]
 netMask = @[]
+hostDisc =  @[]
 ##########################################################
 export SSH, TELNET, HTTP, HTTPS, TCP, UDP, RAW, ICMP
 export IPv4, IPv6, STREAM, DGRAM, SRAW, SEQPACKET
@@ -59,7 +61,7 @@ export hostSwitch
 ##########################################################
 #nmap commands and additional features
 proc createMask*(host: string): string {.discardable.} =
-   var i = 1
+   var i = 0
    if endsWith(host, "/24"):##Create NetMask out of IP Address
       let host = replace(host, "/24", "")
       let seperators = {'.'}
@@ -72,33 +74,38 @@ proc createMask*(host: string): string {.discardable.} =
    while i <= 255:
       netMask.add(ipMask & $i)
       inc(i)
-      
-proc nmapIface*(): (string) {.discardable.} =
+
+proc nmapHostDisc*(): (string) {.discardable.} =
    var i = 0
-   while i <= 255:
+   for i in countup(0, 255):
       let localWlan = replace(localWlan, "x", $i)
+      echo "Router: " & localWlan
       try:
          var sock = newSocket(IPv4, STREAM, TCP)
-         echo localWlan
          sock.connect(localWlan, Port(HTTP), 350 * 1)
-         let router = localWlan
+         let router = localWlan & "/24"
          sock.close()
-         var socket = newSocket()
-         socket.bindAddr(Port(82))
-         socket.listen()
-         createMask(router)
-         for x in netMask:
-            try:
-               var iface = newSocket()
-               iface.connect(x, Port(82), 350 * 1)
-               echo "localhost: " & x
-               socket.close()
-               iface.close()
-            except:
-               inc(i)
+         try:
+            var socket = newSocket()
+            socket.bindAddr(Port(8201))
+            createMask(router)
+            for x in netMask:
+               try:
+                  echo "No Response: " & x
+                  var iface = newSocket()
+                  iface.connect(x, Port(8201), 350 * 1)
+                  echo "Found Host: " & x
+                  hostDisc.add(x)
+                  socket.close()
+                  iface.close()
+               except:
+                 let ErrorMsg = getCurrentExceptionMsg()
+         except:
+            let ErrorMsg = getCurrentExceptionMsg()
       except:
-         inc(i)
-
+         let ErrorMsg = getCurrentExceptionMsg()
+   echo "Host on Network: " & hostDisc
+         
 #This proc is standard connect
 proc nmapScan*(host: string, port: int): string {.discardable.} =
    if port == 0:
