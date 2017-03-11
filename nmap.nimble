@@ -2,7 +2,7 @@
 name          = "nmap"
 version       = "0.1.4"
 author        = "blmvxer"
-description   = "Nmap library for Nim"
+description   = "a Pure Nmap implementation library for Nim"
 license       = "GPLv2"
 
 [Deps]
