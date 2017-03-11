@@ -9,12 +9,15 @@ Documentation will be added as this project progresses as well as commented sect
 # Commands
 
 <br>
-* nMap_iface()
+* nmapIface()
  * Non-functional in current state
  * Native implementation without ExecCmd
 <br>
-* nMap_scan(host: string, Port(port: int)
-* nMap_scan(host: string, Port(port: int, aType: Domain, sType: SockType, nType: Protocol)
+* nmapScan(host: string, Port(port: int)
+* nmapScan(host: string, Port(port: int, aType: Domain, sType: SockType, nType: Protocol)
+<br>
+* nmapHostDisc()
+ * Determines local router and host on network
 <br>
 * portList.add(port: int)
 * for i in countup(1, 999): portList.add(i)
@@ -55,11 +58,11 @@ Documentation will be added as this project progresses as well as commented sect
 <br>
 [ ] Test if Ports are filtered or not
 <br>
-[ ] Host Discovery
+[x] Host Discovery
 <br>
 [ ] OS Fingerprinting
 <br>
-[x] nmapIface()
+[ ] nmapIface()
 <br>
 [x] NetMask support for host: string
 <br>
