@@ -42,18 +42,23 @@ var
    localWlan = "192.168.x.1"        #Define router
    hostDisc: seq[string]            #Host carrier
    winSpecPort: seq[string]         #Windows Specific Ports
-   printSpecPort: seq[string]
+   printSpecPort: seq[string]       #Printer Specific Ports
+   osxSpecPort: seq[string]         #OSX Specific Ports
 #List handlers
 portList = @[]
 hostMask = @[]
 netMask = @[]
 hostDisc = @[]
 ##########################################################
-winSpecPort = @["135:rpc", "445:netbios/microsoft-ds", 
+winSpecPort = @["135:rpc", "139:netbios-ssn",
+                "445:netbios/microsoft-ds", 
                 "2689:icslap", "5357:wsdapi"]
 ##########################################################
 printSpecPort = @["515:printer", "631:ipp", 
                   "9100:jetdirect"]
+##########################################################
+osxSpecPort = @["548:apovertcp","2336:appleugcontrol", 
+                "4488:awacs-ice", "8088:radan-http"] 
 ##########################################################
 export SSH, TELNET, HTTP, HTTPS, TCP, UDP, RAW, ICMP
 export IPv4, IPv6, STREAM, DGRAM, SRAW, SEQPACKET
