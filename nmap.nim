@@ -4,7 +4,7 @@
 ##
 ## Credit: https://nmap.org
 ##
-## Released under GPLv3, see LICENSE file
+## Released under MIT, see LICENSE file
 ## 2017 - blmvxer <blmvxer@gmail.com>
 ##
 
@@ -41,11 +41,13 @@ var
    netMask: seq[string]             #e.g. 192.168.1.1/24
    localWlan = "192.168.x.1"        #Define router
    hostDisc: seq[string]            #Host carrier
+   winSpecPort: seq[string]         #Windows Specific Ports
 #List handlers
 portList = @[]
 hostMask = @[]
 netMask = @[]
 hostDisc = @[]
+winSpecPort = @["2689:icslap","5357:wsdapi"]
 ##########################################################
 export SSH, TELNET, HTTP, HTTPS, TCP, UDP, RAW, ICMP
 export IPv4, IPv6, STREAM, DGRAM, SRAW, SEQPACKET
@@ -66,7 +68,7 @@ proc createMask*(host: string): string {.discardable.} =
    while i <= 255:
       netMask.add(ipMask & $i)
       inc(i)
-         
+
 #This proc is standard connect
 proc nmapScan*(host: string, port: int): string {.discardable.} =
    if port == 0:
@@ -101,7 +103,7 @@ proc nmapScan*(host: string, port: int,
       if pType == UDP:
          var sock = newSocket()
          discard sock.sendTo(host, Port(port), "status\n")
-         let recPacket = sock.recvLine(1024 * 5)#TODO Work on sending and receiving data from Packets
+         let recPacket = sock.recvLine(1024)#TODO Work on sending and receiving data from Packets
          echo sizeOf(recPacket)#TODO
       else:
          var sock = newSocket(dType, sType, pType)#Allow control over Domain, SockType, and Protocol
@@ -109,7 +111,7 @@ proc nmapScan*(host: string, port: int,
          let sPort = intToStr(port)
          echo host & " Connected succesfully on " & sPort
          sock.send("bbHHh")
-         let recPacket = sock.recvLine(1024 * 5)
+         let recPacket = sock.recv(1024, timeout=2000, flags={SocketFlag.Peek, SocketFlag.SafeDisconn})
          echo sizeOf(recPacket)
          sock.close()
    except:
@@ -151,9 +153,12 @@ proc nmapHostDisc*(): (string) {.discardable.} =
             echo "\n"
             echo "Hosts on Network: " & hostDisc
             echo "\n"
-            echo "Starting Port Discovery"
-            for k in hostDisc:
-               nmapScan(k, 0)
+            if portList.len == 0:
                quit()
+            else:
+               for k in hostDisc:
+                  echo "Starting Port Discovery"
+                  nmapScan(k, 0)
+                  quit()
       except:
          let ErrorMsg = getCurrentExceptionMsg()
