@@ -15,6 +15,43 @@
 import net, strutils, os
 
 ##Constant Values, Types and Exports
+type
+   TCPOPT = enum #TCP_OPTIONS
+      EOL = 0
+      NOP = 1
+      MAXSEG = 2
+      WSCALE = 3
+      SACKOK = 4
+      SACK = 5
+      TIMESTAMP = 8
+   
+   TCPF = enum #TCP_FLAGS
+      FIN = 0x01
+     SYN = 0x02
+     RST = 0x04
+     PUSH = 0x08
+     ACK = 0x10
+     URG = 0x20
+     ECE = 0x40
+     CWR = 0x80
+   
+   IP = enum
+      TOS_CE = 0x01
+      TOS_ECT = 0x02
+      VER = 0x04
+      PROTO = 0x06
+   
+#   IPv4_hdr = enum
+#      ver_hlen = uint8
+#      tos_ecn = uint8
+#      tot_len = uint16
+#      id = uint16
+#      flags_off = uint16
+#      ttl = uint8
+#      proto = uint8
+#      cksum = uint16
+#      src = uint8
+#      dst = uint8
 const
    TCP = IPPROTO_TCP
    UDP = IPPROTO_UDP
@@ -30,12 +67,12 @@ const
    TELNET = 23
    HTTP = 80
    HTTPS = 443
-
+   
 var
-   dType = IPv4                     #Domain
+   dType = IPv4                          #Domain
    sType = STREAM                   #SockType
-   pType = TCP                      #Protocol
-   recPacket = newString(1024)      #1024bit Packet
+   pType = TCP                           #Protocol
+   recPacket = newString(1500)      #1500bit Packet
    portList: seq[int]               #Custom Ports
    hostMask: seq[string]            #Carry's IP bits
    netMask: seq[string]             #e.g. 192.168.1.1/24
